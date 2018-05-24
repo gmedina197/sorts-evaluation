@@ -7,14 +7,20 @@ void swap(int *a, int *b) {
 }
 //--------------------------------------------------------------------------------------------
 
-void bubbleSort(int arr[], int n) {
+int bubbleSort(int arr[], int n) {
+    int compOB = 0, swapOB = 0;
     int i, j;
-    for (i = 0; i < n - 1; i++)
-
+    for (i = 0; i < n - 1; i++){
         // Last i elements are already in place
-        for (j = 0; j < n - i - 1; j++)
-            if (arr[j] > arr[j + 1])
+        for (j = 0; j < n - i - 1; j++){
+            compOB++;
+            if (arr[j] > arr[j + 1]){
                 swap(&arr[j], &arr[j + 1]);
+                swapOB++;
+            }
+        }
+    }
+    return ( compOB + swapOB );
 }
 //--------------------------------------------------------------------------------------------
 
