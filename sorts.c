@@ -127,6 +127,7 @@ void merge(int arr[], int l, int m, int r) {
     /* Copy data to temp arrays L[] and R[] */
     for (i = 0; i < n1; i++)
         L[i] = arr[l + i];
+     
     for (j = 0; j < n2; j++)
         R[j] = arr[m + 1+ j];
  
@@ -134,12 +135,17 @@ void merge(int arr[], int l, int m, int r) {
     i = 0; // Initial index of first subarray
     j = 0; // Initial index of second subarray
     k = l; // Initial index of merged subarray
+    compOB++;
     while (i < n1 && j < n2) {
+        compOB+=2;
         if (L[i] <= R[j]) {
+            swapOB++;
             arr[k] = L[i];
             i++;
         }
         else {
+            compOB++;
+            swapOB++;
             arr[k] = R[j];
             j++;
         }
@@ -148,7 +154,10 @@ void merge(int arr[], int l, int m, int r) {
  
     /* Copy the remaining elements of L[], if there
        are any */
+    compOB++;
     while (i < n1) {
+        compOB++;
+        swapOB++;
         arr[k] = L[i];
         i++;
         k++;
@@ -156,7 +165,10 @@ void merge(int arr[], int l, int m, int r) {
  
     /* Copy the remaining elements of R[], if there
        are any */
+    compOB++;
     while (j < n2) {
+        compOB++;
+        swapOB++;
         arr[k] = R[j];
         j++;
         k++;
@@ -172,7 +184,9 @@ void mergeSort(int arr[], int l, int r) {
         int m = l+(r-l)/2;
  
         // Sort first and second halves
+        callCount++;
         mergeSort(arr, l, m);
+        callCount++;
         mergeSort(arr, m+1, r);
  
         merge(arr, l, m, r);
@@ -212,8 +226,6 @@ int main(int argc, char *argv[]) {
             n = sizeof(arr) / sizeof(arr[0]),
             range = (1000 - 1) + 1;
 
-        int mediaComp[10], mediaSwap[10];
-
         for(int i = 0; i < NUMBER_SAMPLES; i++){
             srand(time(NULL));
             
@@ -233,8 +245,10 @@ int main(int argc, char *argv[]) {
             }
 
             else if(strcmp(argv[2],"worst") == 0){ //ordenado maior para menor
-                for (int j = arraySize; j >= 0; j--) {
-                    arr[j] = j;
+                int k = arraySize;
+                for (int j = 0; j < arraySize; j++) {
+                    arr[j] = k;
+                    k--;
                 }
             }
 
@@ -259,24 +273,20 @@ int main(int argc, char *argv[]) {
             else if(strcmp(argv[1], "quick") == 0) {
                 callCount++;
                 quickSort(arr, 0, n - 1); 
-                //fprintf(results, "%d\n", quickSort(arr, 0, n - 1));
+                long long int total = callCount * (swapOB + compOB);
+                fprintf(results, "%lld\n", total);
             }
             else if(strcmp(argv[1], "merge") == 0) {
-                //fprintf(results, "%d\n", mergeSort(arr, 0, n - 1));
+                callCount++;
+                mergeSort(arr, 0, n-1);
+                long long int total = callCount * (swapOB + compOB);
+                fprintf(results, "%lld\n", total);
             }
             /* ==================================================================================*/  
-            mediaComp[i] = compOB;
-            mediaSwap[i] = swapOB;
             compOB = 0;
             swapOB = 0;  
+            callCount = 0;
         }
-
-        long double mediaC, mediaS;
-        for(int i = 0; i < 10; i++){
-            mediaC += mediaComp[i];
-            mediaS += mediaSwap[i];
-        }
-        fprintf(results, "Medias = %Lf %Lf\n", (mediaC/10), (mediaS/10));
 
         arraySize += 1000;
     }
